@@ -1,0 +1,12 @@
+.tracklist {
+  display: flex;
+  flex-direction: column;
+}
+.track {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.track p {
+  margin: 0;
+}
