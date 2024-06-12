@@ -1,24 +1,14 @@
-// import { useGlobalContext } from "../../context/context";
-
-// const Playlist = () => {
-//   const { playlistName, playlistTrack } = useGlobalContext();
-//   return (
-//     <>
-//       <div>{playlistName}</div>
-//       <div>{playlistTrack}</div>
-//     </>
-//   );
-// };
-
-// export default Playlist;
 import styles from "./Playlist.module.css";
 import Tracklist from "../Tracklist/Tracklist";
+import { useGlobalContext } from "../../context/context";
 
-const Playlist = () => {
+const Playlist = ({ tracks }) => {
+  const { name, handleNameChange } = useGlobalContext();
   return (
     <div className={styles.playlist}>
       <h2>Playlist</h2>
-      <Tracklist />
+      <input type="text" value={name} onChange={handleNameChange} />
+      <Tracklist tracks={tracks} isRemoval={true} />
       <button className={styles.save__btn}>Save to Spotify</button>
     </div>
   );

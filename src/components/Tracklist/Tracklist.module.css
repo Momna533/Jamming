@@ -10,3 +10,19 @@
 .track p {
   margin: 0;
 }
+.add__btn,
+.remove__btn {
+  background-color: #1db954;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 25px;
+  text-align: center;
+}
+.remove__btn {
+  background-color: #ff4d4d;
+}

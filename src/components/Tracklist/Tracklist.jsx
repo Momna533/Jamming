@@ -1,21 +1,33 @@
 import styles from "./Tracklist.module.css";
 import { useGlobalContext } from "../../context/context";
 
-const Track = ({ name, artist, album }) => {
+const Track = ({ track, isRemoval }) => {
+  const { addTrack, removeTrack } = useGlobalContext();
   return (
     <div className={styles.track}>
       <p>
-        {name} by {artist} from {album}
+        {track.name} by {track.artist} from {track.album}
       </p>
+      {isRemoval ? (
+        <button
+          className={styles.remove__btn}
+          onClick={() => removeTrack(track)}
+        >
+          -
+        </button>
+      ) : (
+        <button className={styles.add__btn} onClick={() => addTrack(track)}>
+          +
+        </button>
+      )}
     </div>
   );
 };
-const Tracklist = () => {
-  const { tracks } = useGlobalContext();
+const Tracklist = ({ tracks, isRemoval }) => {
   return (
     <div className={styles.tracklist}>
       {tracks.map((track) => (
-        <Track key={track.id} {...track} />
+        <Track key={track.id} track={track} isRemoval={isRemoval} />
       ))}
     </div>
   );
