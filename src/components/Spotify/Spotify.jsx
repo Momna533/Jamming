@@ -1,5 +1,10 @@
-// const clientId = "3ad4a7090c2e41c3bf298785f36ab47b";
-// const redirectUri = "http://localhost:5173/";
+const clientId = "3ad4a7090c2e41c3bf298785f36ab47b";
+const redirectUri = "http://localhost:5173/";
+const scopes = "playlist-modify-public";
+const authorizeUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&scope=${encodeURIComponent(
+  scopes
+)}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+
 const Spotify = {
   getAccessToken() {
     const accessToken = localStorage.getItem("spotify_access_token");
@@ -52,65 +57,6 @@ const Spotify = {
           uri: track.uri,
         }));
       });
-  },
-
-  getCurrentUserId() {
-    const accessToken = this.getAccessToken();
-    const endpoint = "https://api.spotify.com/v1/me";
-
-    return fetch(endpoint, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => data.id);
-  },
-
-  createPlaylist(userId, playlistName) {
-    const accessToken = this.getAccessToken();
-    const endpoint = `https://api.spotify.com/v1/users/${userId}/playlists`;
-
-    return fetch(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name: playlistName,
-        description: "New playlist created with Jammming",
-        public: true,
-      }),
-    })
-      .then((response) => response.json())
-      .then((data) => data.id);
-  },
-
-  addTracksToPlaylist(playlistId, trackUris) {
-    const accessToken = this.getAccessToken();
-    const endpoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
-
-    return fetch(endpoint, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        uris: trackUris,
-      }),
-    });
-  },
-
-  savePlaylist(playlistName, trackUris) {
-    if (!playlistName || !trackUris.length) {
-      return;
-    }
-
-    this.getCurrentUserId()
-      .then((userId) => this.createPlaylist(userId, playlistName))
-      .then((playlistId) => this.addTracksToPlaylist(playlistId, trackUris));
   },
 };
 

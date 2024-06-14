@@ -65,12 +65,12 @@ const AppProvider = ({ children }) => {
   };
 
   const savePlaylist = () => {
-    const trackUris = playlistTracks.map((track) => track.uri);
-    Spotify.savePlaylist(playlistName, trackUris);
-    setPlaylistName("");
+    const trackURIs = playlistTracks.map((track) => track.uri);
+    console.log("Saving playlist to Spotify with URIs:", trackURIs);
+
+    // Reset the playlist after saving
+    setPlaylistName("New Playlist");
     setPlaylistTracks([]);
-    console.log("Creating playlist with name:", playlistName);
-    console.log("Track URIs:", trackUris);
   };
 
   const handleSearch = (e) => {
