@@ -1,7 +1,5 @@
-const clientId = "3ad4a7090c2e41c3bf298785f36ab47b";
-const redirectUri = "http://localhost:5173/"; // Your Redirect URI registered with Spotify
-const scopes = "playlist-modify-public"; // Scopes your app will request
-
+// const clientId = "3ad4a7090c2e41c3bf298785f36ab47b";
+// const redirectUri = "http://localhost:5173/";
 const Spotify = {
   getAccessToken() {
     const accessToken = localStorage.getItem("spotify_access_token");
@@ -11,7 +9,6 @@ const Spotify = {
       return accessToken;
     }
 
-    // Extract access token from URL if it's there
     const urlToken = window.location.href.match(/access_token=([^&]*)/);
     const urlExpiry = window.location.href.match(/expires_in=([^&]*)/);
 
@@ -20,24 +17,101 @@ const Spotify = {
       const expiresIn = Number(urlExpiry[1]);
       const expiryTime = Date.now() + expiresIn * 1000;
 
-      // Store token and expiration time in localStorage
       localStorage.setItem("spotify_access_token", token);
       localStorage.setItem("spotify_token_expiry_time", expiryTime);
 
-      // Clear the URL parameters
       window.history.pushState("Access Token", null, "/");
 
       return token;
     } else {
-      // Redirect to Spotify authorization page
-      const authorizeUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=token&scope=${encodeURIComponent(
-        scopes
-      )}&redirect_uri=${encodeURIComponent(redirectUri)}`;
       window.location.href = authorizeUrl;
     }
   },
 
-  // Additional methods for making API requests will go here
+  searchTracks(searchTerm) {
+    const accessToken = this.getAccessToken();
+    const endpoint = `https://api.spotify.com/v1/search?type=track&q=${encodeURIComponent(
+      searchTerm
+    )}`;
+
+    return fetch(endpoint, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (!data.tracks) {
+          return [];
+        }
+        return data.tracks.items.map((track) => ({
+          id: track.id,
+          name: track.name,
+          artist: track.artists[0].name,
+          album: track.album.name,
+          uri: track.uri,
+        }));
+      });
+  },
+
+  getCurrentUserId() {
+    const accessToken = this.getAccessToken();
+    const endpoint = "https://api.spotify.com/v1/me";
+
+    return fetch(endpoint, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => data.id);
+  },
+
+  createPlaylist(userId, playlistName) {
+    const accessToken = this.getAccessToken();
+    const endpoint = `https://api.spotify.com/v1/users/${userId}/playlists`;
+
+    return fetch(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: playlistName,
+        description: "New playlist created with Jammming",
+        public: true,
+      }),
+    })
+      .then((response) => response.json())
+      .then((data) => data.id);
+  },
+
+  addTracksToPlaylist(playlistId, trackUris) {
+    const accessToken = this.getAccessToken();
+    const endpoint = `https://api.spotify.com/v1/playlists/${playlistId}/tracks`;
+
+    return fetch(endpoint, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        uris: trackUris,
+      }),
+    });
+  },
+
+  savePlaylist(playlistName, trackUris) {
+    if (!playlistName || !trackUris.length) {
+      return;
+    }
+
+    this.getCurrentUserId()
+      .then((userId) => this.createPlaylist(userId, playlistName))
+      .then((playlistId) => this.addTracksToPlaylist(playlistId, trackUris));
+  },
 };
 
 export default Spotify;

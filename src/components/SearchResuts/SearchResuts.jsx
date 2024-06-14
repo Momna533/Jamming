@@ -13,5 +13,3 @@ const SearchResuts = ({ tracks }) => {
 };
 
 export default SearchResuts;
-//list of search results
-//tracklist component to display tracks

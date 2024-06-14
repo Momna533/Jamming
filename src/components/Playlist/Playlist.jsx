@@ -3,13 +3,13 @@ import Tracklist from "../Tracklist/Tracklist";
 import { useGlobalContext } from "../../context/context";
 
 const Playlist = ({ tracks }) => {
-  const { name, handleNameChange, savePlaylist } = useGlobalContext();
+  const { playlistName, handleNameChange, savePlaylist } = useGlobalContext();
   return (
     <div className={styles.playlist}>
       <h2>Playlist</h2>
       <input
         type="text"
-        value={name}
+        value={playlistName}
         onChange={handleNameChange}
         className={styles.playlist__input}
       />

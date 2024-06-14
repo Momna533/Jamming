@@ -1,14 +1,22 @@
+import { useGlobalContext } from "../../context/context";
 import styles from "./SearchBar.module.css";
 
 const SearchBar = () => {
+  const { searchTerm, setSearchTerm, handleSearch, searchSpotify } =
+    useGlobalContext();
   return (
     <div className={styles.searchbar}>
-      <input type="text" placeholder="Search" />
-      <button>Search</button>
+      <form onSubmit={handleSearch}>
+        <input
+          type="text"
+          placeholder="Search"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        <button type="submit">Search</button>
+      </form>
     </div>
   );
 };
 
 export default SearchBar;
-//text input
-//search btn
